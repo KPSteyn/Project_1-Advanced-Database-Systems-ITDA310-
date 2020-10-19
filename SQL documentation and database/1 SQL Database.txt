@@ -1,0 +1,271 @@
+CREATE DATABASE ITDAProject DEFAULT CHARACTER SET utf8;
+
+USE ITDAProject;
+CREATE TABLE  Staff(
+  StaffIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+  PhoneNumber VARCHAR(10) UNIQUE NOT NULL,
+  Address VARCHAR(60) NOT NULL,
+  StaffType VARCHAR(20) NOT NULL,
+  StaffName VARCHAR(30) NOT NULL,
+  StaffSurname VARCHAR(30) NOT NULL,
+  EmailAddress VARCHAR(30) UNIQUE NOT NULL,
+  Gender VARCHAR(30) NOT NULL,
+  CHECK(Gender = 'Male' OR Gender = 'Female'),
+  Age INTEGER(3) NOT NULL,
+  CHECK(Age>=16 AND Age<120),
+  CurrentlyEmployed BOOLEAN NOT NULL,
+  CHECK(CurrentlyEmployed<=1 AND CurrentlyEmployed >= 0),
+  IDNumber VARCHAR(13) UNIQUE NOT NULL,
+  PRIMARY KEY(StaffIdentifier)
+) ENGINE = InnoDB;
+alter table Staff add constraint IDNumberLentgh check (LEN(IDNumber) = 13);
+alter table Staff add constraint PhoneNumberLentgh check (LEN(PhoneNumber) = 13);
+
+USE ITDAProject;
+
+CREATE TABLE  Patient(
+  PatientIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+  RegisteredOn DATE NOT NULL,
+  PhoneNumber VARCHAR(10) UNIQUE NOT NULL,
+  Address VARCHAR(60) NOT NULL,
+  PatientName VARCHAR(30) NOT NULL,
+  PatientSurname VARCHAR(30) NOT NULL,
+  EmailAddress VARCHAR(30) UNIQUE NOT NULL,
+  Gender VARCHAR(30) NOT NULL,
+  Age INTEGER(3) NOT NULL,
+  Pregnant BOOLEAN NOT NULL,
+  Diabetic BOOLEAN NOT NULL,
+  HIVPositive BOOLEAN NOT NULL,
+  IDNumber VARCHAR(13) UNIQUE NOT NULL,
+  PRIMARY KEY(PatientIdentifier)
+) ENGINE = InnoDB;
+alter table Patient add constraint PatientGender check (Gender = 'Male' OR Gender = 'Female');
+alter table Patient add constraint PatientAge check (Age < 150);
+alter table Patient add constraint PatientPregnant check (Pregnant >=0 AND Pregnant <=1);
+alter table Patient add constraint PatientDiabetic check (Diabetic >=0 AND Diabetic <=1);
+alter table Patient add constraint PatientHIVPositive check (HIVPositive >=0 AND HIVPositive <=1);
+alter table Patient add constraint IDNumberLentgh check (LEN(IDNumber) = 13);
+alter table Patient add constraint PhoneNumberLentgh check (LEN(PhoneNumber) = 13);
+
+
+
+
+USE ITDAProject;
+
+CREATE TABLE CHWtoPatientAssignments(
+  GroupingIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+  StaffIdentifier INTEGER(12) NOT NULL,
+  PatientIdentifier INTEGER(12) NOT NULL,
+  PRIMARY KEY(GroupingIdentifier),
+  CONSTRAINT FOREIGN KEY (StaffIdentifier) REFERENCES Staff (StaffIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (PatientIdentifier) REFERENCES Patient (PatientIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+
+USE ITDAProject;
+
+CREATE TABLE AppointmentType(
+  TypeIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+  AppointmentType VARCHAR(30) NOT NULL,
+  TypeDescription VARCHAR(60) NULL,
+  PRIMARY KEY(TypeIdentifier)
+) ENGINE = InnoDB;
+
+USE ITDAProject;
+
+CREATE TABLE Appointment(
+  AppointmentIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+  PatientIdentifier INTEGER(12) NOT NULL,
+  StaffIdentifier INTEGER(12) NOT NULL,
+  ScheduledBy INTEGER(12) NOT NULL,
+  AppointmentType INTEGER(12) NOT NULL,
+  Description VARCHAR(300) NULL,
+  Attendence BOOLEAN NOT NULL DEFAULT TRUE,
+  ClinicalFindings VARCHAR(300) NULL,
+  Location VARCHAR(60) NOT NULL,
+  AppointmentDate DATE NOT NULL,
+  AppointmentTime Time NOT NULL,    
+  PRIMARY KEY(AppointmentIdentifier),
+  CONSTRAINT FOREIGN KEY (PatientIdentifier) REFERENCES Patient (PatientIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (StaffIdentifier) REFERENCES Staff (StaffIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (ScheduledBy) REFERENCES Staff (StaffIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (AppointmentType) REFERENCES AppointmentType (TypeIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+USE ITDAProject;
+
+CREATE TABLE DiagnosticTest(
+  TestIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+  AppointmentIdentifier INTEGER(12) NOT NULL,
+  TestType VARCHAR(120) NOT NULL,
+  TestResult VARCHAR(600) NOT NULL,
+  StaffIdentifier INTEGER(12) NOT NULL,
+  PRIMARY KEY(TestIdentifier),
+  CONSTRAINT FOREIGN KEY (AppointmentIdentifier) REFERENCES Appointment (AppointmentIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (StaffIdentifier) REFERENCES Staff (StaffIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+USE ITDAProject;
+
+CREATE TABLE PatientDiagnosis(
+  DiagnosisIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+  AppointmentIdentifier INTEGER(12) NOT NULL,
+  DeterminedDiagnosis VARCHAR(60) NOT NULL,
+  DiagnosisDescription VARCHAR(300) NULL,
+  PRIMARY KEY(DiagnosisIdentifier),
+  CONSTRAINT FOREIGN KEY (AppointmentIdentifier) REFERENCES Appointment (AppointmentIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+USE ITDAProject;
+
+CREATE TABLE PatientTreatment(
+  TreatmentIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+  TreatmentDescription VARCHAR(300) NULL,
+  AppointmentIdentifier INTEGER(12) NOT NULL,
+  PRIMARY KEY(TreatmentIdentifier),
+  CONSTRAINT FOREIGN KEY (AppointmentIdentifier) REFERENCES Appointment (AppointmentIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+USE ITDAProject;
+
+CREATE TABLE Medicine(
+  MedicineIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+  MedicineName VARCHAR(60) NOT NULL,
+  MedicineDescription VARCHAR(300) NULL,
+  PRIMARY KEY(MedicineIdentifier)
+) ENGINE = InnoDB;
+
+USE ITDAProject;
+
+CREATE TABLE PatientPrescription(
+    PrescriptionIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+    TreatmentIdentifier INTEGER(12) NOT NULL,
+    MedicineIdentifier INTEGER(12) NOT NULL,
+    MedicineDosage VARCHAR(120) NOT NULL,
+  PRIMARY KEY(PrescriptionIdentifier),
+  CONSTRAINT FOREIGN KEY (TreatmentIdentifier) REFERENCES PatientTreatment (TreatmentIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT FOREIGN KEY (MedicineIdentifier) REFERENCES Medicine (MedicineIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+
+USE ITDAProject;
+
+CREATE TABLE PregnancyStages(
+    StageIdentifier INTEGER(2) NOT NULL AUTO_INCREMENT,
+    StageName VARCHAR(60) NOT NULL,
+    StageDescription VARCHAR(300) NULL DEFAULT NULL,
+  PRIMARY KEY(StageIdentifier)
+) ENGINE = InnoDB;
+
+USE ITDAProject;
+
+CREATE TABLE MomConnect(
+    MCIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+    StageOfPregnancy INTEGER(2) NULL DEFAULT NULL,
+    PatientIdentifier INTEGER(12) NOT NULL,
+  PRIMARY KEY(MCIdentifier),
+  CONSTRAINT FOREIGN KEY (PatientIdentifier) REFERENCES Patient (PatientIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT FOREIGN KEY (StageOfPregnancy) REFERENCES PregnancyStages (StageIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+USE ITDAProject;
+
+CREATE TABLE HouseholdMember(
+    HMIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+    PatientIdentifier INTEGER(12) NOT NULL,
+    MemberName VARCHAR(30) NOT NULL,
+    MemberSurname VARCHAR(30) NOT NULL,
+    CellphoneNumber VARCHAR(10) UNIQUE NULL DEFAULT NULL,
+    EmailAddress VARCHAR(30) UNIQUE NULL DEFAULT NULL,
+    ExistingMedicalConditions VARCHAR(30) NULL DEFAULT NULL,
+    RelationshipWithPatient VARCHAR(30) NOT NULL,   
+PRIMARY KEY(HMIdentifier),
+  CONSTRAINT FOREIGN KEY (PatientIdentifier) REFERENCES Patient (PatientIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+USE ITDAProject;
+
+CREATE TABLE CHWTest(
+    CHWTestIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+    AppointmentIdentifier INTEGER(12) NOT NULL,
+    BloodSugarLevelmmolPerL DOUBLE(5,2) NOT NULL,
+    PRIMARY KEY(CHWTestIdentifier),
+    CONSTRAINT FOREIGN KEY (AppointmentIdentifier) REFERENCES Appointment (AppointmentIdentifier)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+alter table CHWTest add constraint BloodSugarRange check (BloodSugarLevelmmolPerL >=1 AND BloodSugarLevelmmolPerL <=100);
+
+USE ITDAProject;
+
+CREATE TABLE CHWDrugAdministration(
+    AdministrationIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+    CHWTestIdentifier INTEGER(12) NOT NULL,
+    DrugAdministered VARCHAR(60) NOT NULL,
+    DrugDosageINmg DOUBLE(8,2) NOT NULL,    
+PRIMARY KEY(AdministrationIdentifier),
+    CONSTRAINT FOREIGN KEY (CHWTestIdentifier) REFERENCES CHWTest (CHWTestIdentifier)
+  ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+
+USE ITDAProject;
+
+CREATE TABLE EducationalVideo(
+    VideoIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+    VideoTitle VARCHAR(300) NOT NULL,
+    ProducedBy VARCHAR(60) NULL DEFAULT NULL,
+    DateOfRelease DATE NULL DEFAULT NULL,  
+    ReferenceToVideoUrl VARCHAR(60) NULL DEFAULT NULL,  
+    RuntimeInMinutes INTEGER(4) NULL DEFAULT NULL, 
+    PRIMARY KEY(VideoIdentifier)
+) ENGINE = InnoDB;
+
+USE ITDAProject;
+
+CREATE TABLE CHWStaffLoginDetails(
+    StaffIdentifier INTEGER(12) NOT NULL,
+    StaffUsername VARCHAR(60) UNIQUE NOT NULL,
+    StaffPassword VARCHAR(40) NOT NULL,
+    PRIMARY KEY(StaffIdentifier),
+    CONSTRAINT FOREIGN KEY (StaffIdentifier) REFERENCES Staff (StaffIdentifier)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+USE ITDAProject;
+
+CREATE TABLE Message(
+    MessageIdentifier INTEGER(12) NOT NULL AUTO_INCREMENT,
+    MessageContent VARCHAR(500) NOT NULL,
+    StaffMessageRecipient INTEGER(12) NULL DEFAULT NULL,
+    PatientMessageRecipient INTEGER(12) NULL DEFAULT NULL,
+    PRIMARY KEY(MessageIdentifier),
+    CONSTRAINT FOREIGN KEY (StaffMessageRecipient) REFERENCES Staff (StaffIdentifier)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT FOREIGN KEY (PatientMessageRecipient) REFERENCES Patient (PatientIdentifier)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+
+
+
+
+
+
+
+

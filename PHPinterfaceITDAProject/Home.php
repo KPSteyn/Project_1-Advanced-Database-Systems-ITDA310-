@@ -1,0 +1,74 @@
+<?php session_start(); 
+	$pdo = new PDO('mysql:host=localhost;port=3306;dbname=itdaproject','CHW', 'community');
+	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+if (!isset($_SESSION['staffUsername'])){ //Redirects non-logged in users back to the Login Page
+	header('Location: Login.php');
+	return;
+}
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+    	<link type="text/css" rel="stylesheet" href="Home.css">
+        <title>Home Page</title>
+        <header> 
+				<nav>
+					<ul>
+						<li id="homenav" style="background-color: #9c0202;">
+							<a href = "Home.php">HOME</a>
+						</li>
+						<li>
+							<a href = "Household.php">Patient's Household Members</a>
+						</li>
+						<li>
+							<a href = "Inbox.php">Inbox</a>
+						</li>
+						<li>
+							<a href = "video.php">Videos</a>
+						</li>
+						<li>
+							<a href = "Patient.php">Patients</a>
+						</li>
+						<li>
+							<a href = "Schedule.php">Schedule</a>
+						</li>
+						<li>
+							<a href = "BloodSugarTest.php">Blood Sugar Test</a>
+						</li>
+
+						<li>
+							<a href = "Drug.php">Drug Administration</a>
+						</li>
+						<li>
+							<a href = "LogOutCHW.php">Logout</a>
+						</li>
+					</ul>
+				</nav>
+			</header>
+
+    </head>
+    <body>
+    	<br><br><br><br><br><center>
+    	<h1>Welcome <?php 
+
+$statement = $pdo->query("SELECT StaffName, StaffSurname FROM staff WHERE staffIdentifier = ".$_SESSION['StaffID']);
+
+while ( $row = $statement->fetch(PDO::FETCH_ASSOC)) { 
+        
+          echo($row['StaffName']." ".$row['StaffSurname']);
+
+      }
+      
+
+
+    	?></h1></center>
+
+    </body>
+    <footer>
+    	
+    </footer>
+</html>
+
+
+

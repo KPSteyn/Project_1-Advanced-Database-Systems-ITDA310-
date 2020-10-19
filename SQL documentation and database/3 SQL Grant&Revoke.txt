@@ -1,0 +1,147 @@
+USE ITDAProject;
+
+CREATE USER 'CHW'@'localhost' IDENTIFIED BY 'community';
+CREATE USER 'Receptionist'@'localhost' IDENTIFIED BY 'reception';
+CREATE USER 'HospitalClinician'@'localhost' IDENTIFIED BY 'clinician';
+CREATE USER 'LabTechnician'@'localhost' IDENTIFIED BY 'labtech';
+CREATE USER 'Pharmasist'@'localhost' IDENTIFIED BY 'pharm';
+
+
+GRANT UPDATE ON itdaproject.educationalvideo TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.educationalvideo TO 'CHW'@'localhost';
+GRANT INSERT ON itdaproject.educationalvideo TO 'CHW'@'localhost';
+GRANT DELETE ON itdaproject.educationalvideo TO 'CHW'@'localhost';
+GRANT UPDATE ON itdaproject.appointment TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.appointment TO 'CHW'@'localhost';
+GRANT INSERT ON itdaproject.appointment TO 'CHW'@'localhost';
+GRANT DELETE ON itdaproject.appointment TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.appointmenttype TO 'CHW'@'localhost';
+GRANT UPDATE ON itdaproject.patient TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.patient TO 'CHW'@'localhost';
+GRANT UPDATE ON itdaproject.householdmember TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.householdmember TO 'CHW'@'localhost';
+GRANT INSERT ON itdaproject.householdmember TO 'CHW'@'localhost';
+GRANT DELETE ON itdaproject.householdmember TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.chwtopatientassignments TO 'CHW'@'localhost';
+GRANT UPDATE ON itdaproject.chwtest TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.chwtest TO 'CHW'@'localhost';
+GRANT INSERT ON itdaproject.chwtest TO 'CHW'@'localhost';
+GRANT DELETE ON itdaproject.chwtest TO 'CHW'@'localhost';
+GRANT UPDATE ON itdaproject.chwdrugadministration TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.chwdrugadministration TO 'CHW'@'localhost';
+GRANT INSERT ON itdaproject.chwdrugadministration TO 'CHW'@'localhost';
+GRANT DELETE ON itdaproject.chwdrugadministration TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.pregnancystages TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.message TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.chwstafflogindetails TO 'CHW'@'localhost';
+GRANT SELECT ON itdaproject.staff TO 'CHW'@'localhost';
+GRANT DELETE ON CHWStaffViewHouseholdMembers TO 'CHW'@'localhost';
+GRANT UPDATE ON CHWDetailedDrugAdministration TO 'CHW'@'localhost';
+GRANT SELECT ON CHWDetailedDrugAdministration TO 'CHW'@'localhost';
+GRANT INSERT ON CHWDetailedDrugAdministration TO 'CHW'@'localhost';
+GRANT DELETE ON CHWStaffViewHouseholdMembers TO 'CHW'@'localhost';
+GRANT UPDATE ON CHWDetailedBloodSugarResults TO 'CHW'@'localhost';
+GRANT SELECT ON CHWDetailedBloodSugarResults TO 'CHW'@'localhost';
+GRANT INSERT ON CHWDetailedBloodSugarResults TO 'CHW'@'localhost';
+GRANT DELETE ON CHWStaffViewHouseholdMembers TO 'CHW'@'localhost';
+GRANT UPDATE ON CHWStaffViewHouseholdMembers TO 'CHW'@'localhost';
+GRANT SELECT ON CHWStaffViewHouseholdMembers TO 'CHW'@'localhost';
+GRANT INSERT ON CHWStaffViewHouseholdMembers TO 'CHW'@'localhost';
+GRANT SELECT ON CHWDetailedPatientAssignment TO 'CHW'@'localhost';
+GRANT SELECT ON CHWStaffViewAppointment TO 'CHW'@'localhost';
+
+
+
+
+
+GRANT UPDATE ON itdaproject.appointment TO 'Receptionist'@'localhost';
+GRANT SELECT ON itdaproject.appointment TO 'Receptionist'@'localhost';
+GRANT INSERT ON itdaproject.appointment TO 'Receptionist'@'localhost';
+GRANT DELETE ON itdaproject.appointment TO 'Receptionist'@'localhost';
+GRANT SELECT ON itdaproject.appointmenttype TO 'Receptionist'@'localhost';
+GRANT UPDATE ON itdaproject.patient TO 'Receptionist'@'localhost';
+GRANT SELECT ON itdaproject.patient TO 'Receptionist'@'localhost';
+GRANT INSERT ON itdaproject.patient TO 'Receptionist'@'localhost';
+GRANT DELETE ON itdaproject.patient TO 'Receptionist'@'localhost';
+GRANT UPDATE ON itdaproject.chwtopatientassignments TO 'Receptionist'@'localhost';
+GRANT SELECT ON itdaproject.chwtopatientassignments TO 'Receptionist'@'localhost';
+GRANT INSERT ON itdaproject.chwtopatientassignments TO 'Receptionist'@'localhost';
+GRANT DELETE ON itdaproject.chwtopatientassignments TO 'Receptionist'@'localhost';
+GRANT SELECT ON itdaproject.householdmember TO 'Receptionist'@'localhost';
+GRANT SELECT ON itdaproject.staff TO 'Receptionist'@'localhost';
+GRANT UPDATE ON receptionistViewOfAppointments TO 'Receptionist'@'localhost';
+GRANT SELECT ON receptionistViewOfAppointments TO 'Receptionist'@'localhost';
+GRANT INSERT ON receptionistViewOfAppointments TO 'Receptionist'@'localhost';
+GRANT DELETE ON receptionistViewOfAppointments TO 'Receptionist'@'localhost';
+
+
+
+
+GRANT UPDATE ON itdaproject.appointment TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.appointment TO 'HospitalClinician'@'localhost';
+GRANT INSERT ON itdaproject.appointment TO 'HospitalClinician'@'localhost';
+GRANT DELETE ON itdaproject.appointment TO 'HospitalClinician'@'localhost';
+GRANT UPDATE ON itdaproject.appointmenttype TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.appointmenttype TO 'HospitalClinician'@'localhost';
+GRANT INSERT ON itdaproject.appointmenttype TO 'HospitalClinician'@'localhost';
+GRANT DELETE ON itdaproject.appointmenttype TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.chwtest TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.chwdrugadministration TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.diagnostictest TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.householdmember TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.medicine TO 'HospitalClinician'@'localhost';
+GRANT UPDATE ON itdaproject.patient TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.patient TO 'HospitalClinician'@'localhost';
+GRANT UPDATE ON itdaproject.patientdiagnosis TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.patientdiagnosis TO 'HospitalClinician'@'localhost';
+GRANT DELETE ON itdaproject.patientdiagnosis TO 'HospitalClinician'@'localhost';
+GRANT INSERT ON itdaproject.patientdiagnosis TO 'HospitalClinician'@'localhost';
+GRANT UPDATE ON itdaproject.patientprescription TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.patientprescription TO 'HospitalClinician'@'localhost';
+GRANT INSERT ON itdaproject.patientprescription TO 'HospitalClinician'@'localhost';
+GRANT DELETE ON itdaproject.patientprescription TO 'HospitalClinician'@'localhost';
+GRANT UPDATE ON itdaproject.patienttreatment TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.patienttreatment TO 'HospitalClinician'@'localhost';
+GRANT INSERT ON itdaproject.patienttreatment TO 'HospitalClinician'@'localhost';
+GRANT DELETE ON itdaproject.patienttreatment TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.pregnancystages TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON itdaproject.chwtopatientassignments TO 'HospitalClinician'@'localhost';
+GRANT UPDATE ON HospitalClinicialAppointments TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON HospitalClinicialAppointments TO 'HospitalClinician'@'localhost';
+GRANT INSERT ON HospitalClinicialAppointments TO 'HospitalClinician'@'localhost';
+GRANT DELETE ON HospitalClinicialAppointments TO 'HospitalClinician'@'localhost';
+GRANT UPDATE ON PharmasistAndHospitalClinicialPrescriptions TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON PharmasistAndHospitalClinicialPrescriptions TO 'HospitalClinician'@'localhost';
+GRANT INSERT ON PharmasistAndHospitalClinicialPrescriptions TO 'HospitalClinician'@'localhost';
+GRANT DELETE ON PharmasistAndHospitalClinicialPrescriptions TO 'HospitalClinician'@'localhost';
+GRANT SELECT ON LabTechnicianAndHospitalClinicialDetailedDiagnosticTest TO 'HospitalClinician'@'localhost';
+
+
+
+
+
+GRANT SELECT ON itdaproject.patient TO 'LabTechnician'@'localhost';
+GRANT SELECT ON itdaproject.appointment TO 'LabTechnician'@'localhost';
+GRANT SELECT ON itdaproject.appointmenttype TO 'LabTechnician'@'localhost';
+GRANT UPDATE ON itdaproject.diagnostictest TO 'LabTechnician'@'localhost';
+GRANT SELECT ON itdaproject.diagnostictest TO 'LabTechnician'@'localhost';
+GRANT INSERT ON itdaproject.diagnostictest TO 'LabTechnician'@'localhost';
+GRANT DELETE ON itdaproject.diagnostictest TO 'LabTechnician'@'localhost';
+GRANT UPDATE ON LabTechnicianAndHospitalClinicialDetailedDiagnosticTest TO 'LabTechnician'@'localhost';
+GRANT SELECT ON LabTechnicianAndHospitalClinicialDetailedDiagnosticTest TO 'LabTechnician'@'localhost';
+GRANT INSERT ON LabTechnicianAndHospitalClinicialDetailedDiagnosticTest TO 'LabTechnician'@'localhost';
+GRANT DELETE ON LabTechnicianAndHospitalClinicialDetailedDiagnosticTest TO 'LabTechnician'@'localhost';
+
+
+GRANT SELECT ON itdaproject.patient TO 'Pharmasist'@'localhost';
+GRANT SELECT ON itdaproject.appointment TO 'Pharmasist'@'localhost';
+GRANT UPDATE ON itdaproject.patientprescription TO 'Pharmasist'@'localhost';
+GRANT SELECT ON itdaproject.patientprescription TO 'Pharmasist'@'localhost';
+GRANT INSERT ON itdaproject.patientprescription TO 'Pharmasist'@'localhost';
+GRANT DELETE ON itdaproject.patientprescription TO 'Pharmasist'@'localhost';
+GRANT UPDATE ON itdaproject.medicine TO 'Pharmasist'@'localhost';
+GRANT SELECT ON itdaproject.medicine TO 'Pharmasist'@'localhost';
+GRANT INSERT ON itdaproject.medicine TO 'Pharmasist'@'localhost';
+GRANT DELETE ON itdaproject.medicine TO 'Pharmasist'@'localhost';
+GRANT SELECT ON PharmasistAndHospitalClinicialPrescriptions TO 'Pharmasist'@'localhost';
+

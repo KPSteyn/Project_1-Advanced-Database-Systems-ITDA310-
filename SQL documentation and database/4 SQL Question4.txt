@@ -1,0 +1,140 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~TRIGGERS:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CREATE DEFINER=`root`@`localhost` 
+TRIGGER `PatientNoLongerPregnant` AFTER Update ON `patient` FOR EACH ROW 
+BEGIN IF(OLD.Pregnant = 1 AND NEW.Pregnant = 0) THEN Delete FROM `momconnect` WHERE `momconnect`.`PatientIdentifier` = NEW.`PatientIdentifier`; 
+END IF; END
+
+
+
+CREATE DEFINER=`root`@`localhost` 
+TRIGGER `NewPregnantPatient` AFTER INSERT ON `patient` FOR EACH ROW 
+BEGIN IF(NEW.Pregnant = 1) THEN Insert INTO momconnect (`MCIdentifier`,`StageOfPregnancy`, `PatientIdentifier`) Values (NULL, NULL, NEW.PatientIdentifier); END IF; END
+
+
+
+CREATE DEFINER=`root`@`localhost` 
+TRIGGER `PatientNowPregnant` AFTER Update ON `patient` FOR EACH ROW 
+BEGIN IF(OLD.Pregnant = 0 AND NEW.Pregnant = 1) THEN Insert INTO momconnect (`MCIdentifier`,`StageOfPregnancy`, `PatientIdentifier`) Values (NULL, NULL, NEW.PatientIdentifier); END IF; END
+
+
+
+CREATE DEFINER=`root`@`localhost` 
+TRIGGER `MomConnectMessageTrigger` AFTER INSERT ON `momconnect` FOR EACH ROW 
+BEGIN Insert INTO message (`MessageIdentifier`, `MessageContent`, `StaffMessageRecipient`, `PatientMessageRecipient`) Values (NULL, AddedToMCMessage(NEW.PatientIdentifier),Null, NEW.PatientIdentifier); END
+
+
+
+CREATE DEFINER=`root`@`localhost` 
+TRIGGER `AppointmentConfirmationMessageTrigger` AFTER INSERT ON `appointment` FOR EACH ROW 
+BEGIN Insert INTO message (`MessageIdentifier`, `MessageContent`, `StaffMessageRecipient`, `PatientMessageRecipient`) Values (NULL, AppointmentConfirmationMessage(NEW.PatientIdentifier, NEW.AppointmentDate, NEW.AppointmentTime),Null, NEW.PatientIdentifier); END
+
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~StoredProcedures:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `FindPatientOnSystemByName`(IN `Name_of_Patient` VARCHAR(30), IN `Surname_of_Patient` VARCHAR(30)) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
+BEGIN Select * from patient where patient.`PatientName` = `Name_of_Patient` AND patient.`PatientSurname` = `Surname_of_Patient`; END
+
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `FindPatientOnSystemByID`(IN `ID_of_Patient` VARCHAR(13)) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
+BEGIN Select * from patient where patient.`IDNumber` = `ID_of_Patient`; END
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Cursor:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CHWWorkList_Yesterday`(IN `CHW_Staff_ID` INT(12)) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
+BEGIN
+    DECLARE finished int default 0;
+    DECLARE PatientID INTEGER(12);    
+    DECLARE ScheduledByStaffId INTEGER(12);
+    DECLARE TypeOfAppointment INTEGER(12);
+    DECLARE TimeOfYesterdaysAppointment TIME;
+DECLARE findYesterdaysAppointmnet CURSOR for Select `PatientIdentifier`, `ScheduledBy`, `AppointmentType`, `AppointmentTime` FROM appointment WHERE appointment.`StaffIdentifier` = CHW_Staff_ID AND appointment.`AppointmentDate` = CURRENT_DATE() - 1;
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+open findYesterdaysAppointmnet;
+Select count(*) AS 'Total Number of Appointments Yesterday' FROM appointment WHERE appointment.`StaffIdentifier` = CHW_Staff_ID AND appointment.`AppointmentDate` = CURRENT_DATE() - 1;
+get_appointment_information_loop :LOOP
+FETCH findYesterdaysAppointmnet INTO PatientID, ScheduledByStaffId, TypeOfAppointment, TimeOfYesterdaysAppointment;
+IF finished = 1
+  THEN LEAVE get_appointment_information_loop;
+end if;
+select TimeOfYesterdaysAppointment, PatientID, ScheduledByStaffId, TypeOfAppointment;
+end loop get_appointment_information_loop;
+close findYesterdaysAppointmnet;          
+END
+
+
+
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CHWWorkList_Today`(IN `CHW_Staff_ID` INT(12)) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
+BEGIN
+    DECLARE finished int default 0;
+    DECLARE PatientID INTEGER(12);    
+    DECLARE ScheduledByStaffId INTEGER(12);
+    DECLARE TypeOfAppointment INTEGER(12);
+    DECLARE TimeOfTodaysAppointment TIME;  
+  DECLARE findTodaysAppointmnet CURSOR for Select `PatientIdentifier`, `ScheduledBy`, `AppointmentType`, `AppointmentTime` FROM appointment WHERE appointment.`StaffIdentifier` = CHW_Staff_ID AND appointment.`AppointmentDate` = CURRENT_DATE();
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+open findTodaysAppointmnet;
+Select count(*) AS 'Total Number of Appointments Today' FROM appointment WHERE appointment.`StaffIdentifier` = CHW_Staff_ID AND appointment.`AppointmentDate` = CURRENT_DATE();
+get_appointment_information_loop :LOOP
+FETCH findTodaysAppointmnet INTO PatientID, ScheduledByStaffId, TypeOfAppointment, TimeOfTodaysAppointment;
+IF finished = 1
+  THEN LEAVE get_appointment_information_loop;
+end if;
+select TimeOfTodaysAppointment, PatientID, ScheduledByStaffId, TypeOfAppointment;
+end loop get_appointment_information_loop;
+close findTodaysAppointmnet;            
+END
+     
+
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CHWWorkList_Tomorrow`(IN `CHW_Staff_ID` INT(12)) NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
+BEGIN
+    DECLARE finished int default 0;
+    DECLARE PatientID INTEGER(12);    
+    DECLARE ScheduledByStaffId INTEGER(12);
+    DECLARE TypeOfAppointment INTEGER(12);
+    DECLARE TimeOfTomorrowsAppointment TIME;
+  DECLARE findTomorrowsAppointmnet CURSOR for Select `PatientIdentifier`, `ScheduledBy`, `AppointmentType`, `AppointmentTime` FROM appointment WHERE appointment.`StaffIdentifier` = CHW_Staff_ID AND appointment.`AppointmentDate` = CURRENT_DATE() + 1;
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+open findTomorrowsAppointmnet;
+Select count(*) AS 'Total Number of Appointments Tomorrow' FROM appointment WHERE appointment.`StaffIdentifier` = CHW_Staff_ID AND appointment.`AppointmentDate` = CURRENT_DATE() + 1;
+get_appointment_information_loop :LOOP
+FETCH findTomorrowsAppointmnet INTO PatientID, ScheduledByStaffId, TypeOfAppointment, TimeOfTomorrowsAppointment;
+IF finished = 1
+  THEN LEAVE get_appointment_information_loop;
+end if;
+select TimeOfTomorrowsAppointment, PatientID, ScheduledByStaffId, TypeOfAppointment;
+end loop get_appointment_information_loop;
+close findTomorrowsAppointmnet;             
+END
+
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Functions:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+						
+CREATE DEFINER=`root`@`localhost` FUNCTION `AddedToMCMessage`(`ID_of_Patient` INT(12)) RETURNS VARCHAR(200) CHARSET utf8 NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
+BEGIN DECLARE FirstN VARCHAR(30); DECLARE LastN VARCHAR(30); DECLARE message VARCHAR(160) default ' you are receiving this confirmation message to notify you that you have been registered on the BroadReach MomConnect system.'; DECLARE findPatientInfo CURSOR for Select `PatientName`, `PatientSurname` FROM patient WHERE patient.`PatientIdentifier` = ID_of_Patient; open findPatientInfo; FETCH findPatientInfo into FirstN,LastN; close findPatientInfo; return concat('Dear ',FirstN,' ', LastN, message); END
+
+
+
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `AppointmentConfirmationMessage`(`ID_of_Patient` INT(12), `ADate` DATE, `ATime` TIME) RETURNS VARCHAR(200) CHARSET utf8 NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER 
+BEGIN DECLARE FirstN VARCHAR(30); DECLARE LastN VARCHAR(30); DECLARE messagePart1 VARCHAR(160) default ' your requested appointment for '; DECLARE messagePart2 VARCHAR(160) default ' at BroadReach has been confirmed.'; DECLARE findPatientInfo CURSOR for Select `PatientName`, `PatientSurname` FROM patient WHERE patient.`PatientIdentifier` = ID_of_Patient; DECLARE findAppointmentInfo CURSOR for Select * FROM patient; open findPatientInfo; FETCH findPatientInfo into FirstN,LastN; close findPatientInfo; return concat('Dear ',FirstN,' ', LastN, messagePart1, ADate,' at ' ,ATime, messagePart2); END
+
+
+
